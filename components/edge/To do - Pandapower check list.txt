@@ -1,0 +1,37 @@
+Set up the environment
+Install Python (3.9+ recommended), then pandapower plus supporting libraries: numpy, pandas, matplotlib, and pandapower's plotting extras. Set up a dedicated virtual environment or conda env for this project so versions stay consistent across your team. Confirm the install with pandapower's built-in example network before touching your own model.
+
+Learn the core pandapower element model
+Go through pandapower's core element types before building anything: bus, line, trafo (transformer), load, sgen (static generator, used for PV), and ext_grid (the slack/upstream connection). Understand the difference between per-unit (pu) results and real voltage/power values, since your voltage limit checks (240V) need real values, not pu.
+
+Design the exact feeder topology
+Decide the exact topology: 1 external grid -> MV/LV distribution transformer -> LV main busbar -> 5 radial branch lines -> 5 household buses, each with a load and a PV sgen. This matches your problem statement's focus on reverse power flow through a single LV distribution transformer, so a scaled-down feeder is more realistic for your use case than a full IEEE 13/34-bus network. Draw this as a single-line diagram before coding it - this diagram becomes part of your architecture slide too.
+
+Gather realistic parameters
+Source real or standard values: transformer rating (e.g. 100 kVA, 11kV/0.4kV is typical for Sri Lankan LV distribution - confirm with your power-engineer contact), LV cable/line type from pandapower's std_types library (e.g. NAYY 4x120 SE) or CEB-equivalent cable specs, line lengths between transformer and each household (realistic distances, e.g. 50-200m), and household load profiles (average residential kW + power factor) and PV capacity per house (typical rooftop kW).
+
+Build the network in pandapower code
+Write the network in code step by step: pp.create_empty_network() -> create_ext_grid() -> create_bus() for MV and LV sides -> create_transformer() or create_transformer_from_parameters() -> create_bus() x5 for households -> create_line() x5 connecting LV busbar to each household (or in a radial chain, matching your topology) -> create_load() x5 -> create_sgen() x5 for PV. Name every element clearly (e.g. 'house_1_load') so results are readable later.
+
+Run and sanity-check the base case power flow
+Run pp.runpp() and confirm it converges without errors. Check net.res_bus.vm_pu for voltage at every bus, net.res_line.loading_percent for line loading, and net.res_trafo.loading_percent for transformer loading. At base load (no/low PV), voltages should sit close to 1.0 pu (near 230-240V) - if they don't, your parameters need adjusting.
+
+Validate reverse power flow behavior
+Gradually increase PV injection (sgen output) at the household buses, especially the ones furthest from the transformer, and re-run power flow after each increase. Confirm you can reproduce the reverse power flow phenomenon: voltage rising above your regulatory limit (240V / ~1.04-1.06 pu) as PV export increases, and that far-end households hit the limit before near-end ones. This is the exact behavior your whole project is built around - if you can't reproduce it, the model isn't representative yet.
+
+Get expert validation on realism
+Walk the model and its parameters past your supervisor/co-supervisor or the power engineer you're consulting (per the panel's comment). Confirm the transformer rating, cable types, and load/PV magnitudes are realistic for a CEB-style LV network, not arbitrary numbers that happen to converge.
+
+ 1.Environment installs cleanly and pandapower's example network runs without errors
+ 2.Single-line diagram of your exact 5-household feeder exists (hand-drawn or digital)
+ 3.Every parameter (transformer rating, cable type, line lengths, load/PV sizes) is sourced from a real reference or confirmed by a power engineer — nothing is a guessed placeholder
+ 4.Network builds in code with all elements named clearly and no hardcoded "magic numbers" scattered through the script
+ 5.Base-case power flow converges and produces voltages close to nominal (near 230–240V) with low PV/load
+ 6.You've reproduced reverse power flow: voltage rises past 240V as PV export increases, and the furthest household hits the limit first — this is the core phenomenon your whole project addresses, so this is the most important box to tick
+ 7.Transformer and line loading percentages are checked, not just bus voltages
+ 8.The whole thing is wrapped in a reusable function that takes load/PV levels as input and returns results — this is what Step 4 (training data generation) will call in a loop
+ 9.Code is committed to your repo with a README explaining topology and parameter sources
+ 10.You can run it live in front of your supervisor without errors — this is your "core workflow" demo piece for the presentation
+
+One practical note: don't over-invest in matching a textbook IEEE 13/34-bus feeder here. Your problem statement is specifically about a single LV distribution transformer experiencing reverse power flow from 5 households — a scaled-down, realistic radial LV feeder is actually the more defensible choice, and easier to validate with a power engineer than an arbitrary large benchmark network would be.
+
