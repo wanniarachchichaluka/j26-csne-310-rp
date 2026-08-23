@@ -1,0 +1,14 @@
+Optimal coordination of PV smart inverter and traditional volt-VAR control devices for energy cost savings and voltage regulation
+
+Distributed Volt-VAR control — Maui field experiment
+
+Allocation and smart inverter setting of ground-mounted photovoltaic power plants for the maximization of hosting capacity in distribution networks
+
+Coordinated Volt/VAr control for real-time operation of smart distribution grids
+
+Visibility-enhanced model-free deep reinforcement learning algorithm for voltage control in realistic distribution systems using smart inverters
+
+Voltage Control Method of Multienergy Distribution Grid Based on Deep Reinforcement Learning Considering Attention and Value Decomposition
+
+Enhanced TD3 multi-agent reinforcement learning approach for distributed energy resources coordination in active distribution network
+

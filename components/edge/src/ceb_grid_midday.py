@@ -8,7 +8,7 @@ net = pp.create_empty_network(name="CEB_Power_grid_Midday", f_hz=50.0, sn_mva=1,
 # ============================================================================
 # 2. BUSES
 # ============================================================================
-# HV External Grid Bus (11 kV)
+# An equivalent 11-kV upstream CEB supply feeding a representative 11/0.4-kV LV distribution feeder.
 b1 = pp.create_bus(
     net,
     vn_kv=11.0,
