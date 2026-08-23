@@ -1,0 +1,43 @@
+Clear
+
+New Circuit.CEB_LV_Feeder
+~ basekv=11
+~ pu=1.0
+~ phases=3
+~ bus1=SourceBus
+~ frequency=50
+
+New Vsource.Source
+~ bus1=SourceBus
+~ phases=3
+~ basekv=11
+~ pu=1.0
+~ frequency=50
+
+Set VoltageBases=[11, 0.4]
+CalcVoltageBases
+
+New Transformer.CEB_160kVA
+~ Buses=[SourceBus, LVBus]
+~ Conns=[Delta, Wye]
+~ KVs=[11, 0.4]
+~ KVAs=[160, 160]
+~ %Rs=[1.65625, 1.65625]
+~ Xhl=4.0
+~ %LoadLoss=1.65625
+~ %NoLoadLoss=0.225
+~ Wdg=1
+~ Bus=SourceBus
+~ Conn=Delta
+~ kV=11
+~ kVA=160
+~ %R=1.65625
+
+~ Wdg=2
+~ Bus=LVBus
+~ Conn=Wye
+~ kV=0.4
+~ kVA=160
+~ %R=1.65625
+
+Solve
